@@ -4,9 +4,15 @@ for example ; may a web serer access files in users'home directories?
 
 SElinux operates in three modes.
 
-Enforcing : 
+Enforcing : the highest security level on selinux. any unauthorized access or action that violates the policy is immediately blocked.
+  
+-- all blocked actions are recorded in the systems logs (/var/log/audit)
+this mode is default, most secure , and officially recommended mode for production environments.
 
-Permissive: 
+
+Permissive: this policy is not block any actions. 
+any activity that would normally be blocked in Enforcing mode is allowed to run but a warning/log is entry is created. 
+--This mode is primarily used for troubleshooting, debugging application errors or developing new security rules.
 
 Disable: 
 
@@ -56,11 +62,12 @@ we can check the status of selinux when your system up.
 selinux status : disabled
 ```
 
+Frequently asked questions (FAQ)
+-if selinux is disabled, is system security completely at risk? 
+-Yes when selinux is disabled, kernel-level access controls for applicatons are removed.Therefore, it is recommended to disable it only in necessary situations.
 
-
-
-
-
+what is difference between selinux and apparmor?
+-selinux comes by default red hat and centos- based systems, while apparmor is mor common using by debian/ubuntu systems. 
 
 
 
