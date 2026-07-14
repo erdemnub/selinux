@@ -62,12 +62,23 @@ we can check the status of selinux when your system up.
 selinux status : disabled
 ```
 
-Frequently asked questions (FAQ)
--if selinux is disabled, is system security completely at risk? 
--Yes when selinux is disabled, kernel-level access controls for applicatons are removed.Therefore, it is recommended to disable it only in necessary situations.
+**Process analyzing**
+First, we have to see running programs(process) using the this command run:
 
-what is difference between selinux and apparmor?
--selinux comes by default red hat and centos- based systems, while apparmor is mor common using by debian/ubuntu systems. 
+```bash
+ps -auxZ
+```
+this output: 
+```bash
+system_u : system_r : kernel_t : s0
+```
+
+system_u (**user**): shows that this process belongs to the system backend
+system_r (**role**) the _r means **role**. it proves this is a running system service or process.
+kernel_t (**domain**) the _t stands for **type** but when appliedd to a process it is called a domain. 
+s0 (**sensivity): the base multi-level security clearance. 
+
+
 
 
 
@@ -140,6 +151,13 @@ sudo ausearch -c 'your_app_name' --raw | audit2allow -M my_custom_policy
 Inject this custom policy module back into the system:
 sudo semodule -i my_custom_policy.pp
 
+
+Frequently asked questions (FAQ)
+-if selinux is disabled, is system security completely at risk? 
+-Yes when selinux is disabled, kernel-level access controls for applicatons are removed.Therefore, it is recommended to disable it only in necessary situations.
+
+what is difference between selinux and apparmor?
+-selinux comes by default red hat and centos- based systems, while apparmor is mor common using by debian/ubuntu systems. 
 
 
 
