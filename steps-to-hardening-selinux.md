@@ -29,8 +29,40 @@ Max kernel policy version:      31
 ```
 
 if you wanna tempoarily or permanently disable selinux , when temporarily disabled it willl be re-enabled system restart. when permanently disabled you will need to re-enable it.
-
+to this tempoarily change mode to selinux : 
+```bash
 setenforce 0 
+```
+> it will change your selinux policy to  "permissive"
+
+if you want hardening selinux policy full protection you have to run : 
+```bash
+setenforce 1
+```
+
+to permanently disable or change selinux policy follow this steps:
+
+(if required sudo) {nano /etc/sysconfig/selinux} 
+> SELINUX=disabled (save and exit)
+> reboot
+
+
+run :
+```bash
+sestatus
+```
+we can check the status of selinux when your system up.
+```bash
+selinux status : disabled
+```
+
+
+
+
+
+
+
+
 
 
 targeted policy (kernel_t)
