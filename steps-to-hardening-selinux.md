@@ -4,17 +4,17 @@ for example ; may a web serer access files in users'home directories?
 
 SElinux operates in three modes.
 
-Enforcing : the highest security level on selinux. any unauthorized access or action that violates the policy is immediately blocked.
+**Enforcing** : the highest security level on selinux. any unauthorized access or action that violates the policy is immediately blocked.
   
 -- all blocked actions are recorded in the systems logs (/var/log/audit)
 this mode is default, most secure , and officially recommended mode for production environments.
 
 
-Permissive: this policy is not block any actions. 
+**Permissive**: this policy is not block any actions. 
 any activity that would normally be blocked in Enforcing mode is allowed to run but a warning/log is entry is created. 
 --This mode is primarily used for troubleshooting, debugging application errors or developing new security rules.
 
-Disable: 
+**Disable**: the security mechanism is comletely turned of at the kernel level. No rules are checked no security violations are logged. 
 
 Meanwhile in RHEL, Fedora and CentOS 8 SElinux comes in enforcing mode by default.
 check the SElinux mode run: 
@@ -85,3 +85,12 @@ second object role
 last block s0 sensivity(mls)
 
 configuration files in the etc directory. 
+
+
+
+**SYSADMİNTİP MANAGENİNG NETWORK PORTS **
+
+network ports also have a context.
+```bash
+semanage port -l
+```
