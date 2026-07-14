@@ -94,3 +94,66 @@ network ports also have a context.
 ```bash
 semanage port -l
 ```
+
+for example the see http ports 
+```bash
+semanage port -l | grep http
+<img width="657" height="144" alt="image" src="https://github.com/user-attachments/assets/587d5602-7fae-48cc-a451-46f17b1dfa5e" />
+```
+
+if you starting up apache nginx , it could attach to ports 80,81,443 488,8008,8009,8443,9000. 
+
+**all ports below 1024 (such as 80, 443, 22, etc.) can only be opened by the "root" (the highest-level administrator) user.**
+The encrypted (HTTPS) equivalent of 8080 is also usually port 8443.
+
+http_cache_port (like nginx reverse proxy.{8080,8118,8123,10001-10010}). 
+
+**how to grant selinux permissions to an app without any permissive mode? **
+- method 1 using selinux have built-in on/off switches.
+Common scenarios; if your front-end Nginx needs to pass traffic to your back-end Apache, you don't turn off SELinux
+
+```bash
+# allow nginx/apache to connect to backend services over the network (Required for Reverse Proxy)
+sudo setsebool -P httpd_can_network_connect 1
+# Allow your web server to connect to a database (MySQL/PostgreSQL)
+sudo setsebool -P httpd_can_network_connect_db 1
+
+# The -P flag makes the setting permanent so it survives a system reboot.
+```
+
+If your application (like a Node.js or Python app) functions as a web service but wants to listen on a non-standard port like 5000, SELinux will block it by default. Instead of going permissive, you add that port directly to the web server rulebook:
+
+```bash
+# Legally add port 5000 to the web server (http_port_t) group
+sudo semanage port -a -t http_port_t -p tcp 5000
+```
+**Generating Custom Policies from Logs**
+
+if your application is doing something unique and you keep getting "Permission Denied" errors, those blocks are recorded in the security logs. You can scan these logs and generate a custom, tailor-made security policy for that specific app:
+
+Review what SELinux blocked and see the suggested rule
+sudo ausearch -c 'your_app_name' --raw | audit2allow -m my_custom_rule
+
+Compile the exact block into a permanent policy module packet 
+sudo ausearch -c 'your_app_name' --raw | audit2allow -M my_custom_policy
+ 
+Inject this custom policy module back into the system:
+sudo semodule -i my_custom_policy.pp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
