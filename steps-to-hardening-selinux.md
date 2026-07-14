@@ -1,6 +1,9 @@
 ### what is Security Enhanced Linux (SELinux) ?
+
+
 it provides an additional layer of system security. its operation logic is May <subject> do <action> to <object>?
 for example ; may a web serer access files in users'home directories? 
+
 
 SElinux operates in three modes.
 
@@ -9,7 +12,6 @@ SElinux operates in three modes.
 -- all blocked actions are recorded in the systems logs (/var/log/audit)
 this mode is default, most secure , and officially recommended mode for production environments.
 
-
 **Permissive**: this policy is not block any actions. 
 any activity that would normally be blocked in Enforcing mode is allowed to run but a warning/log is entry is created. 
 --This mode is primarily used for troubleshooting, debugging application errors or developing new security rules.
@@ -17,7 +19,9 @@ any activity that would normally be blocked in Enforcing mode is allowed to run 
 **Disable**: the security mechanism is comletely turned of at the kernel level. No rules are checked no security violations are logged. 
 
 Meanwhile in RHEL, Fedora and CentOS 8 SElinux comes in enforcing mode by default.
-check the SElinux mode run: 
+
+
+if you dont know what selinux type are running your machine ; check the SElinux mode run: 
 ```bash
 sestatus
 ```
@@ -35,13 +39,15 @@ Max kernel policy version:      31
 ```
 
 if you wanna tempoarily or permanently disable selinux , when temporarily disabled it willl be re-enabled system restart. when permanently disabled you will need to re-enable it.
+
 to this tempoarily change mode to selinux : 
+
 ```bash
 setenforce 0 
 ```
 > it will change your selinux policy to  "permissive"
 
-if you want hardening selinux policy full protection you have to run : 
+meanwhile you want hardening selinux policy full protection you have to run : 
 ```bash
 setenforce 1
 ```
@@ -78,10 +84,33 @@ system_r (**role**) the _r means **role**. it proves this is a running system se
 kernel_t (**domain**) the _t stands for **type** but when appliedd to a process it is called a domain. 
 s0 (**sensivity): the base multi-level security clearance. 
 
+**Analyzing files and folders (ls -Z)
+Okay, I'm analyzed common scenerio for web servers. 
+
+```bash
+system_u : object_r : httpd_sys_content_t : s0 html
+```
+system_u (**user**): the sys user identity that owns the data structure.
+
+object_r (**role**): instead of system_r, files get object_r. This tells SElinux this is a passive object(a file or folder) not a living running process. 
+
+httpd_sys_content_t(**type**) this label marks this directory as web content for the Apache web server.
+
+s0 (**sensitivity**): standart data classification level. But wait what do s0,s1,s2,s3 mean?
+
+s0 = **unclasssifed/public(low level)**
+s1 = **confidential**
+s2 = **secret**
+s3 = **top secret**
 
 
 
+the core rule of multi-level security  is **"read down- write up"**
+For example a process running at s2(**secret**)
+--can read files at s2,s1 and s0.
+  --cannot read files at s3(top secret).
 
+  
 
 targeted policy (kernel_t)
 
@@ -94,6 +123,11 @@ system_u : object_r : httpd_sys_content_t : s0 html
 first block system user
 second object role 
 last block s0 sensivity(mls)
+
+
+
+
+
 
 configuration files in the etc directory. 
 
@@ -111,6 +145,10 @@ for example the see http ports
 semanage port -l | grep http
 <img width="657" height="144" alt="image" src="https://github.com/user-attachments/assets/587d5602-7fae-48cc-a451-46f17b1dfa5e" />
 ```
+
+
+
+
 
 if you starting up apache nginx , it could attach to ports 80,81,443 488,8008,8009,8443,9000. 
 
@@ -138,6 +176,9 @@ If your application (like a Node.js or Python app) functions as a web service bu
 # Legally add port 5000 to the web server (http_port_t) group
 sudo semanage port -a -t http_port_t -p tcp 5000
 ```
+
+
+
 **Generating Custom Policies from Logs**
 
 if your application is doing something unique and you keep getting "Permission Denied" errors, those blocks are recorded in the security logs. You can scan these logs and generate a custom, tailor-made security policy for that specific app:
@@ -150,6 +191,9 @@ sudo ausearch -c 'your_app_name' --raw | audit2allow -M my_custom_policy
  
 Inject this custom policy module back into the system:
 sudo semodule -i my_custom_policy.pp
+
+
+
 
 
 Frequently asked questions (FAQ)
