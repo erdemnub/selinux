@@ -54,7 +54,7 @@ setenforce 1
 
 to permanently disable or change selinux policy follow this steps:
 
-(if required sudo) {nano /etc/sysconfig/selinux} 
+(if required sudo)  { nano /etc/selinux/config }
 > SELINUX=disabled (save and exit)
 > reboot
 
@@ -104,18 +104,32 @@ object_r (**role**): instead of system_r, files get object_r. This tells SElinux
 
 httpd_sys_content_t(**type**) this label marks this directory as web content for the Apache web server.
 
-s0 (**sensitivity**): standart data classification level. But wait what do s0,s1,s2,s3 mean?
+s0 (**sensitivity**): standart data classification level. 
+
+
+
+
+
+
+But wait what do s0,s1,s2,s3 mean?
 
 s0 = **unclasssifed/public(low level)**
+
 s1 = **confidential**
+
 s2 = **secret**
+
 s3 = **top secret**
 
 
 
+
 the core rule of multi-level security  is **"read down- write up"**
+
 For example a process running at s2(**secret**)
+
 --can read files at s2,s1 and s0.
+
   --cannot read files at s3(top secret).
 
   
@@ -158,7 +172,8 @@ semanage port -l | grep http
 
 
 
-if you starting up apache nginx , it could attach to ports 80,81,443 488,8008,8009,8443,9000. 
+if you starting up apache nginx , it could attach to ports 
+{ 80,81,443,488,8008,8009,8443,9000 } . 
 
 **all ports below 1024 (such as 80, 443, 22, etc.) can only be opened by the "root" (the highest-level administrator) user.**
 The encrypted (HTTPS) equivalent of 8080 is also usually port 8443.
@@ -205,10 +220,13 @@ sudo semodule -i my_custom_policy.pp
 
 
 Frequently asked questions (FAQ)
+
 -if selinux is disabled, is system security completely at risk? 
+
 -Yes when selinux is disabled, kernel-level access controls for applicatons are removed.Therefore, it is recommended to disable it only in necessary situations.
 
 what is difference between selinux and apparmor?
+
 -selinux comes by default red hat and centos- based systems, while apparmor is mor common using by debian/ubuntu systems. 
 
 
