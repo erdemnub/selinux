@@ -68,6 +68,14 @@ we can check the status of selinux when your system up.
 selinux status : disabled
 ```
 
+
+
+
+
+
+
+
+
 **Process analyzing**
 First, we have to see running programs(process) using the this command run:
 
